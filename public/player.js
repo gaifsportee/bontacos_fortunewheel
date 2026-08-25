@@ -48,14 +48,39 @@
     return res.json();
   }
 
+  function pulseWinner(canvas, slices, rotation, index) {
+    return new Promise((resolve) => {
+      const start = performance.now();
+      const dur = 950;
+      function frame(now) {
+        const t = Math.min(1, (now - start) / dur);
+        // two bright pulses that fade out
+        const glow = Math.abs(Math.sin(t * Math.PI * 2)) * (1 - t);
+        Wheel.drawWheel(canvas, slices, rotation, { highlight: index, glow });
+        if (t < 1) requestAnimationFrame(frame);
+        else { Wheel.drawWheel(canvas, slices, rotation); resolve(); }
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
   async function runSpin(play) {
     if (state.spinning) return;
     state.spinning = true;
-    qs('btn-spin').disabled = true;
+    const btn = qs('btn-spin');
+    btn.disabled = true;
+    btn.textContent = 'SPINNING…';
+    if (window.Sound) Sound.enable();
     const canvas = qs('wheel');
-    state.rotation = await Wheel.spinTo(canvas, state.config.slices, play.winningIndex);
+    state.rotation = await Wheel.spinTo(canvas, state.config.slices, play.winningIndex, {
+      fromRotation: state.rotation,
+      onTick: () => { if (window.Sound) Sound.tick(); },
+    });
+    if (window.Sound) Sound.win();
+    await pulseWinner(canvas, state.config.slices, state.rotation, play.winningIndex);
     state.spinning = false;
-    qs('btn-spin').disabled = false;
+    btn.disabled = false;
+    btn.textContent = 'SPIN';
     showPrize(play);
   }
 

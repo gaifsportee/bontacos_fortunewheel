@@ -12,7 +12,10 @@ function createApp(db, opts = {}) {
   app.use('/api', createPlayRouter(db));
   app.use('/api', createFeedbackRouter(db));
   app.use('/api/admin', createAdminRouter(db, opts));
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  app.use(express.static(path.join(__dirname, '..', 'public'), {
+    etag: true,
+    setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache'),
+  }));
   return app;
 }
 

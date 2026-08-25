@@ -15,3 +15,7 @@ Thumbs.db
 
 # App data
 data/
+
+# Playwright / screenshots
+.playwright-mcp/
+/*.png

@@ -3,6 +3,7 @@
   const screens = ['welcome','unlock','wheel','prize','review','feedback','lead','done'];
   function show(name) {
     screens.forEach((s) => qs('screen-' + s).classList.toggle('active', s === name));
+    if (name === 'wheel') sizeWheel();
   }
 
   // Stable per-device id (best-effort anti-replay; the daily code is the real gate).
@@ -14,15 +15,27 @@
 
   const params = new URLSearchParams(location.search);
   const KIOSK = params.get('mode') === 'kiosk';
+  if (KIOSK) document.body.classList.add('kiosk');
 
-  let config = null;
-  let lastPlay = null;
+  const state = { config: null, pendingPlay: null, rotation: 0, spinning: false };
+
+  function sizeWheel() {
+    if (!state.config) return;
+    const wrap = document.querySelector('.wheel-wrap');
+    const px = wrap.clientWidth || 320;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const canvas = qs('wheel');
+    canvas.width = Math.round(px * dpr);
+    canvas.height = Math.round(px * dpr);
+    Wheel.drawWheel(canvas, state.config.slices, state.rotation);
+  }
+  window.addEventListener('resize', () => {
+    if (qs('screen-wheel').classList.contains('active') && !state.spinning) sizeWheel();
+  });
 
   async function loadConfig() {
-    config = await (await fetch('/api/config')).json();
-    if (config.logoUrl) { const l = qs('logo'); l.src = config.logoUrl; l.hidden = false; }
-    qs('title').textContent = 'Spin to win! 🌮';
-    Wheel.drawWheel(qs('wheel'), config.slices, 0);
+    state.config = await (await fetch('/api/config')).json();
+    document.title = (state.config.name || 'BON TACOS') + ' — Spin to Win';
   }
 
   async function doPlay(code) {
@@ -36,10 +49,12 @@
   }
 
   async function runSpin(play) {
-    lastPlay = play;
-    show('wheel');
+    if (state.spinning) return;
+    state.spinning = true;
     qs('btn-spin').disabled = true;
-    await Wheel.spinTo(qs('wheel'), config.slices, play.winningIndex);
+    const canvas = qs('wheel');
+    state.rotation = await Wheel.spinTo(canvas, state.config.slices, play.winningIndex);
+    state.spinning = false;
     qs('btn-spin').disabled = false;
     showPrize(play);
   }
@@ -49,14 +64,16 @@
     qs('prize-label').textContent = `${play.prize.emoji || ''} ${play.prize.label}`.trim();
     qs('win-code').textContent = play.winCode;
     show('prize');
+    if (window.Confetti) Confetti.burst();
     clearInterval(countdownTimer);
     const end = new Date(play.expiresAt).getTime();
+    const el = qs('countdown');
     const tick = () => {
       const left = Math.max(0, Math.floor((end - Date.now()) / 1000));
       const m = String(Math.floor(left / 60)).padStart(2, '0');
       const s = String(left % 60).padStart(2, '0');
-      qs('countdown').textContent = left > 0 ? `Expires in ${m}:${s}` : 'Expired — ask your server';
-      if (left <= 0) clearInterval(countdownTimer);
+      if (left > 0) { el.textContent = `Expires in ${m}:${s}`; el.classList.remove('expired'); }
+      else { el.textContent = 'Expired — ask your server'; el.classList.add('expired'); clearInterval(countdownTimer); }
     };
     tick();
     countdownTimer = setInterval(tick, 1000);
@@ -68,26 +85,32 @@
   qs('btn-unlock').addEventListener('click', async () => {
     qs('code-error').hidden = true;
     const play = await doPlay(qs('code-input').value);
-    if (play) {
-      if (play.alreadyPlayed) { showPrize(play); }   // re-show existing prize
-      else await runSpin(play);
-    }
+    if (!play) return;
+    if (play.alreadyPlayed) { showPrize(play); return; }
+    state.pendingPlay = play;
+    show('wheel'); // idle wheel drawn; customer taps SPIN
   });
 
+  qs('code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') qs('btn-unlock').click(); });
+
   qs('btn-spin').addEventListener('click', async () => {
-    // In kiosk mode there is no code screen; the code is provided via the button flow (Phase 2).
-    if (lastPlay) return; // already spun
-    if (KIOSK) {
-      const play = await doPlay(window.__KIOSK_CODE__ || '');
-      if (play && !play.alreadyPlayed) await runSpin(play);
+    if (state.spinning) return;
+    let play = state.pendingPlay;
+    if (!play && KIOSK) {
+      play = await doPlay(window.__KIOSK_CODE__ || '');
+      if (!play) return;
+      if (play.alreadyPlayed) { showPrize(play); return; }
     }
+    if (!play) return;
+    state.pendingPlay = null;
+    await runSpin(play);
   });
 
   qs('btn-to-review').addEventListener('click', () => show('review'));
 
   qs('btn-up').addEventListener('click', async () => {
     await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sentiment: 'up' }) });
-    if (config.googleReviewUrl) window.location.href = config.googleReviewUrl;
+    if (state.config.googleReviewUrl) window.location.href = state.config.googleReviewUrl;
     else show('lead');
   });
 

@@ -31,7 +31,7 @@
   async function loadStats() {
     const s = await (await api('/stats')).json();
     qs('stats').innerHTML =
-      `<p>Plays: <b>${s.plays}</b> · 👍 ${s.thumbsUp} · 👎 ${s.thumbsDown} · Leads ${s.leads}</p>` +
+      `<p class="stat-row">Plays: <b>${s.plays}</b> &nbsp;·&nbsp; 👍 <b>${s.thumbsUp}</b> &nbsp;·&nbsp; 👎 <b>${s.thumbsDown}</b> &nbsp;·&nbsp; Leads <b>${s.leads}</b></p>` +
       '<ul>' + s.winsByPrize.map((w) => `<li>${w.label}: ${w.n}</li>`).join('') + '</ul>';
   }
 

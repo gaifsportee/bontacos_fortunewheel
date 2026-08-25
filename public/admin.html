@@ -2,40 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1613" />
   <title>BON TACOS — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="assets/logo.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <main id="app" style="max-width:720px;text-align:left">
+<body class="admin">
+  <main id="app">
     <section id="login" class="screen active">
-      <h2>Admin login</h2>
+      <img class="brand-logo" src="assets/logo.png" alt="BON TACOS" style="align-self:center" />
+      <h2 style="text-align:center">Admin login</h2>
       <input id="pw" type="password" placeholder="Admin password" />
-      <button id="btn-login" class="primary">Enter</button>
-      <p id="login-error" class="error" hidden>Wrong password.</p>
+      <button id="btn-login" class="primary" style="align-self:center">Enter</button>
+      <p id="login-error" class="error" hidden style="text-align:center">Wrong password.</p>
     </section>
 
     <section id="panel" class="screen">
-      <h2>Today's code</h2>
-      <div id="code" class="win-code" style="text-align:center"></div>
-      <button id="btn-rotate" class="primary">New code now</button>
+      <h2 style="margin-top:8px">Today's code</h2>
+      <div id="code" class="code-display"></div>
+      <button id="btn-rotate" class="primary" style="margin-top:12px">New code now</button>
 
-      <h2 style="margin-top:28px">Settings</h2>
-      <label>Restaurant name<input id="set-name" /></label>
-      <label>Google review URL<input id="set-review" placeholder="https://..." /></label>
-      <label>Logo URL (optional)<input id="set-logo" placeholder="https://..." /></label>
-      <button id="btn-save-settings" class="primary">Save settings</button>
+      <h2>Settings</h2>
+      <div class="card">
+        <label>Restaurant name<input id="set-name" /></label>
+        <label>Google review URL<input id="set-review" placeholder="https://..." /></label>
+        <label>Logo URL (optional)<input id="set-logo" placeholder="https://..." /></label>
+        <button id="btn-save-settings" class="primary" style="margin-top:14px">Save settings</button>
+      </div>
 
-      <h2 style="margin-top:28px">Prizes</h2>
-      <table id="prizes" style="width:100%;border-collapse:collapse"></table>
-      <button id="btn-add" class="primary" style="margin-top:12px">Add prize</button>
+      <h2>Prizes & odds</h2>
+      <div class="card">
+        <table id="prizes"></table>
+        <button id="btn-add" class="primary" style="margin-top:14px">Add prize</button>
+      </div>
 
-      <h2 style="margin-top:28px">Stats (last 30 days)</h2>
-      <div id="stats"></div>
+      <h2>Stats (last 30 days)</h2>
+      <div class="card"><div id="stats"></div></div>
 
-      <h2 style="margin-top:28px">Feedback</h2>
-      <button id="btn-csv" class="primary">Download CSV</button>
-      <div id="feedback"></div>
+      <h2>Feedback</h2>
+      <div class="card">
+        <button id="btn-csv" class="primary">Download CSV</button>
+        <div id="feedback"></div>
+      </div>
     </section>
   </main>
   <script src="admin.js"></script>

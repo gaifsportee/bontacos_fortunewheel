@@ -46,12 +46,12 @@ CREATE TABLE IF NOT EXISTS feedback (
 `;
 
 const STARTER_PRIZES = [
-  { label: '10% off',        emoji: '💸', color: '#f4a340', weight: 40, daily_cap: null },
-  { label: 'Free drink',     emoji: '🥤', color: '#e8564b', weight: 25, daily_cap: null },
-  { label: 'Free churros',   emoji: '🍩', color: '#6ac07a', weight: 15, daily_cap: 20 },
-  { label: 'Free nachos',    emoji: '🧀', color: '#f2c14e', weight: 10, daily_cap: 10 },
-  { label: 'Free meal',      emoji: '🌮', color: '#7d5fff', weight: 2,  daily_cap: 2 },
-  { label: 'Try again free', emoji: '🎁', color: '#4aa3df', weight: 8,  daily_cap: null },
+  { label: '10% off',        emoji: '💸', color: '#ed1c24', weight: 40, daily_cap: null },
+  { label: 'Free drink',     emoji: '🥤', color: '#f9be1e', weight: 25, daily_cap: null },
+  { label: 'Free churros',   emoji: '🍩', color: '#2f2620', weight: 15, daily_cap: 20 },
+  { label: 'Free nachos',    emoji: '🧀', color: '#f47a20', weight: 10, daily_cap: 10 },
+  { label: 'Free meal',      emoji: '🌮', color: '#c1121a', weight: 2,  daily_cap: 2 },
+  { label: 'Try again free', emoji: '🎁', color: '#f9be1e', weight: 8,  daily_cap: null },
 ];
 
 function initSchema(db) {

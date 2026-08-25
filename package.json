@@ -1,0 +1,18 @@
+{
+  "name": "bontacos-fortunewheel",
+  "version": "0.1.0",
+  "description": "QR fortune wheel + reviews for BON TACOS",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}

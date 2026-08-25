@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>BON TACOS — Spin to Win</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="app">
+    <!-- Welcome -->
+    <section id="screen-welcome" class="screen active">
+      <img id="logo" alt="" hidden />
+      <h1 id="title">Spin to win! 🌮</h1>
+      <p class="sub">Play our wheel and win a treat.</p>
+      <button id="btn-start" class="primary">Start</button>
+    </section>
+
+    <!-- Unlock -->
+    <section id="screen-unlock" class="screen">
+      <h2>Enter today's code</h2>
+      <p class="sub">Ask your server for the code.</p>
+      <input id="code-input" inputmode="text" autocapitalize="characters" placeholder="e.g. TACO42" />
+      <p id="code-error" class="error" hidden>That code isn't right — check with your server.</p>
+      <button id="btn-unlock" class="primary">Unlock</button>
+    </section>
+
+    <!-- Wheel -->
+    <section id="screen-wheel" class="screen">
+      <canvas id="wheel" width="320" height="320"></canvas>
+      <button id="btn-spin" class="primary">SPIN</button>
+    </section>
+
+    <!-- Prize -->
+    <section id="screen-prize" class="screen">
+      <h2 id="prize-title">🎉 You won!</h2>
+      <div id="prize-label" class="prize-label"></div>
+      <p class="sub">Show your server before it expires:</p>
+      <div id="win-code" class="win-code"></div>
+      <div id="countdown" class="countdown"></div>
+      <button id="btn-to-review" class="primary">Next</button>
+    </section>
+
+    <!-- Review ask -->
+    <section id="screen-review" class="screen">
+      <h2>How was it?</h2>
+      <div class="thumbs">
+        <button id="btn-up" class="thumb">👍</button>
+        <button id="btn-down" class="thumb">👎</button>
+      </div>
+      <button id="btn-skip-review" class="link">Skip</button>
+    </section>
+
+    <!-- Private feedback -->
+    <section id="screen-feedback" class="screen">
+      <h2>Sorry about that 🙏</h2>
+      <p class="sub">Tell us what went wrong — it comes straight to us.</p>
+      <textarea id="feedback-text" rows="4" placeholder="What happened?"></textarea>
+      <button id="btn-send-feedback" class="primary">Send</button>
+    </section>
+
+    <!-- Lead / save coupon -->
+    <section id="screen-lead" class="screen">
+      <h2>Want your coupon emailed?</h2>
+      <input id="lead-email" type="email" inputmode="email" placeholder="you@email.com" />
+      <button id="btn-save-lead" class="primary">Save it</button>
+      <button id="btn-skip-lead" class="link">No thanks</button>
+    </section>
+
+    <!-- Done -->
+    <section id="screen-done" class="screen">
+      <h2>Enjoy! 🌮</h2>
+      <p class="sub">See you again at BON TACOS.</p>
+    </section>
+  </main>
+  <script src="wheel.js"></script>
+  <script src="player.js"></script>
+</body>
+</html>

@@ -114,9 +114,10 @@
     qs('code-error').hidden = true;
     const play = await doPlay(qs('code-input').value);
     if (!play) return;
-    if (play.alreadyPlayed) { showPrize(play); return; }
+    // Always show the wheel and let the customer tap SPIN — even a returning player
+    // (already played today) gets the animation; it just lands on their existing prize.
     state.pendingPlay = play;
-    show('wheel'); // idle wheel drawn; customer taps SPIN
+    show('wheel');
   });
 
   qs('code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') qs('btn-unlock').click(); });

@@ -30,8 +30,8 @@
     if (!state.config || !window.Wheel) return;
     var wrap = document.querySelector('.wheel-wrap');
     var px = wrap.clientWidth || 320;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var size = Math.round(px * dpr);
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
+    var size = Math.min(1400, Math.max(900, Math.round(px * dpr))); // high-res for crispness
     var canvas = qs('wheel');
     canvas.width = size; canvas.height = size;
     if (!state.disc || state.discSize !== size || state._rebuild) {

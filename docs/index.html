@@ -13,33 +13,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Arima:wght@500;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="assets/logo.png" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
-<body>
+<body data-bg="main">
   <canvas id="confetti"></canvas>
+  <div class="lang-switch" aria-label="Language">
+    <button data-lang="en" class="active">EN</button>
+    <button data-lang="pl">PL</button>
+  </div>
   <main id="app">
     <!-- Welcome -->
     <section id="screen-welcome" class="screen active">
-      <img class="headline" src="assets/headline-spin.png" alt="Spin to win!" />
+      <img id="headline-spin" class="headline" src="assets/headline-spin.png" alt="Spin to win!" />
       <p class="tagline">Le Tacos á la Française</p>
-      <p class="sub">Play the wheel — everyone wins a treat.</p>
-      <button id="btn-start" class="primary">Start</button>
+      <p class="sub" data-i18n="welcome_sub">Play the wheel — everyone wins a treat.</p>
+      <button id="btn-start" class="primary" data-i18n="start">Start</button>
     </section>
 
     <!-- Unlock -->
     <section id="screen-unlock" class="screen">
       <img class="brand-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-      <h2>Enter today's code</h2>
-      <p class="sub">Ask your server for the code.</p>
+      <h2 data-i18n="enter_code">Enter today's code</h2>
+      <p class="sub" data-i18n="ask_code">Ask your server for the code.</p>
       <input id="code-input" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="e.g. TACO42" />
       <p id="demo-hint" class="sub" hidden></p>
-      <p id="code-error" class="error" hidden>That code isn't right — check with your server.</p>
-      <button id="btn-unlock" class="primary">Unlock</button>
+      <p id="code-error" class="error" hidden data-i18n="code_err">That code isn't right — check with your server.</p>
+      <button id="btn-unlock" class="primary" data-i18n="unlock">Unlock</button>
     </section>
 
     <!-- Wheel -->
     <section id="screen-wheel" class="screen">
-      <h2 class="wheel-heading">Tap to spin!</h2>
+      <h2 class="wheel-heading" data-i18n="tap_spin">Tap to spin!</h2>
       <div class="wheel-wrap">
         <div class="wheel-pointer" aria-hidden="true">
           <svg viewBox="0 0 60 74" width="100%" height="100%">
@@ -50,58 +54,58 @@
         <canvas id="wheel" width="600" height="600"></canvas>
         <img class="wheel-logo" src="assets/logo.png" alt="BON TACOS" />
       </div>
-      <button id="btn-spin" class="primary">SPIN</button>
+      <button id="btn-spin" class="primary" data-i18n="spin">SPIN</button>
     </section>
 
     <!-- Prize -->
     <section id="screen-prize" class="screen">
-      <h2>🎉 You won!</h2>
+      <img class="headline-won" src="assets/prize-won.png" alt="You won!" />
       <div id="prize-label" class="prize-label"></div>
-      <p class="sub">Show your server before it expires:</p>
+      <p class="sub" data-i18n="show_server">Show your server before it expires:</p>
       <div id="win-code" class="win-code"></div>
       <div id="countdown" class="countdown"></div>
-      <button id="btn-to-review" class="primary">Next</button>
+      <button id="btn-to-review" class="primary" data-i18n="next">Next</button>
     </section>
 
     <!-- Review ask -->
     <section id="screen-review" class="screen">
-      <h2>How was it?</h2>
-      <p class="sub">Your prize is yours either way 🌮</p>
+      <h2 data-i18n="how_was_it">How was it?</h2>
+      <p class="sub" data-i18n="either_way">Your prize is yours either way 🌮</p>
       <div class="thumbs">
         <button id="btn-up" class="thumb" aria-label="Good">👍</button>
         <button id="btn-down" class="thumb" aria-label="Bad">👎</button>
       </div>
-      <button id="btn-skip-review" class="link">Skip</button>
+      <button id="btn-skip-review" class="link" data-i18n="skip">Skip</button>
     </section>
 
     <!-- Private feedback -->
     <section id="screen-feedback" class="screen">
-      <h2>Sorry about that 🙏</h2>
-      <p class="sub">Tell us what went wrong — it comes straight to us.</p>
-      <textarea id="feedback-text" rows="4" placeholder="What happened?"></textarea>
-      <button id="btn-send-feedback" class="primary">Send</button>
+      <h2 data-i18n="sorry">Sorry about that 🙏</h2>
+      <p class="sub" data-i18n="tell_us">Tell us what went wrong — it comes straight to us.</p>
+      <textarea id="feedback-text" rows="4" placeholder="What happened?" data-i18n-ph="what_happened"></textarea>
+      <button id="btn-send-feedback" class="primary" data-i18n="send">Send</button>
     </section>
 
     <!-- Lead / save coupon -->
     <section id="screen-lead" class="screen">
-      <h2>Want your coupon emailed?</h2>
+      <h2 data-i18n="want_coupon">Want your coupon emailed?</h2>
       <input id="lead-email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" />
-      <button id="btn-save-lead" class="primary">Save it</button>
-      <button id="btn-skip-lead" class="link">No thanks</button>
+      <button id="btn-save-lead" class="primary" data-i18n="save_it">Save it</button>
+      <button id="btn-skip-lead" class="link" data-i18n="no_thanks">No thanks</button>
     </section>
 
     <!-- Done -->
     <section id="screen-done" class="screen">
-      <img class="brand-logo" src="assets/logo.png" alt="BON TACOS" />
-      <h2>Enjoy! 🌮</h2>
+      <img class="headline-merci" src="assets/headline-merci.png" alt="Merci!" />
       <p class="tagline">Le Tacos á la Française</p>
-      <p class="sub">See you again at BON TACOS.</p>
+      <p class="sub" data-i18n="see_you">See you again at BON TACOS.</p>
     </section>
   </main>
-  <script src="wheel.js?v=5"></script>
-  <script src="confetti.js?v=5"></script>
-  <script src="sound.js?v=5"></script>
-  <script src="api.js?v=5"></script>
-  <script src="player.js?v=5"></script>
+  <script src="wheel.js?v=6"></script>
+  <script src="confetti.js?v=6"></script>
+  <script src="sound.js?v=6"></script>
+  <script src="api.js?v=6"></script>
+  <script src="i18n.js?v=6"></script>
+  <script src="player.js?v=6"></script>
 </body>
 </html>

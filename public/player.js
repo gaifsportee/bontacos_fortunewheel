@@ -4,8 +4,15 @@
 
   function show(name) {
     screens.forEach(function (s) { qs('screen-' + s).classList.toggle('active', s === name); });
+    var bg = name === 'unlock' ? 'unlock' : (name === 'done' ? 'done' : 'main');
+    document.body.setAttribute('data-bg', bg);
     if (name === 'wheel') sizeWheel();
   }
+
+  window.onLangChange = function () {
+    if (!state.spinning) { var b = qs('btn-spin'); if (b) b.textContent = I18N.t('spin'); }
+    var hint = qs('demo-hint'); if (hint && !hint.hidden) hint.textContent = I18N.t('demo_hint');
+  };
 
   function deviceId() {
     var id = localStorage.getItem('bt_device');
@@ -50,7 +57,7 @@
     if (state.config.demo && state.config.demo.code) {
       qs('code-input').value = state.config.demo.code;
       var hint = qs('demo-hint');
-      if (hint) { hint.textContent = 'Demo mode — code pre-filled, just tap Unlock.'; hint.hidden = false; }
+      if (hint) { hint.textContent = I18N.t('demo_hint'); hint.hidden = false; }
     }
   }
 
@@ -65,7 +72,7 @@
     if (state.spinning) return;
     state.spinning = true;
     var btn = qs('btn-spin');
-    btn.disabled = true; btn.textContent = 'SPINNING…';
+    btn.disabled = true; btn.textContent = I18N.t('spinning');
     if (window.Sound) Sound.enable();
     state.rotation = await Wheel.spinTo(qs('wheel'), state.disc, play.winningIndex, state.config.slices.length, {
       onTick: function () { if (window.Sound) Sound.tick(); },
@@ -76,7 +83,7 @@
     await new Promise(function (r) { setTimeout(r, 900); });
     wrap.classList.remove('win');
     state.spinning = false;
-    btn.disabled = false; btn.textContent = 'SPIN';
+    btn.disabled = false; btn.textContent = I18N.t('spin');
     showPrize(play);
   }
 
@@ -93,8 +100,8 @@
       var left = Math.max(0, Math.floor((end - Date.now()) / 1000));
       var m = String(Math.floor(left / 60)).padStart(2, '0');
       var s = String(left % 60).padStart(2, '0');
-      if (left > 0) { el.textContent = 'Expires in ' + m + ':' + s; el.classList.remove('expired'); }
-      else { el.textContent = 'Expired — ask your server'; el.classList.add('expired'); clearInterval(countdownTimer); }
+      if (left > 0) { el.textContent = I18N.t('expires_in') + ' ' + m + ':' + s; el.classList.remove('expired'); }
+      else { el.textContent = I18N.t('expired'); el.classList.add('expired'); clearInterval(countdownTimer); }
     };
     tick();
     countdownTimer = setInterval(tick, 1000);
@@ -146,6 +153,7 @@
   });
   qs('btn-skip-lead').addEventListener('click', function () { show('done'); });
 
+  if (window.I18N) I18N.init();
   loadConfig();
   show('welcome');
 })();

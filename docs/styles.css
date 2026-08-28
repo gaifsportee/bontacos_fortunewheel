@@ -11,11 +11,17 @@ html,body{height:100%}
 body{
   margin:0; color:var(--text);
   font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  background:#1a1613 url("assets/bg-vertical.jpg") center center / cover no-repeat fixed;
+  background-color:#1a1613;
+  background-image:url("assets/bg-vertical.jpg");
+  background-position:center center; background-size:cover; background-repeat:no-repeat; background-attachment:fixed;
   min-height:100dvh; -webkit-font-smoothing:antialiased;
 }
+body[data-bg="unlock"]{ background-image:url("assets/bg-unlock-vertical.jpg"); }
+body[data-bg="done"]{ background-image:url("assets/bg-done-vertical.jpg"); }
 @media (min-aspect-ratio:1/1){
   body{ background-image:url("assets/bg-horizontal.jpg"); }
+  body[data-bg="unlock"]{ background-image:url("assets/bg-unlock-horizontal.jpg"); }
+  body[data-bg="done"]{ background-image:url("assets/bg-done-horizontal.jpg"); }
 }
 /* legibility scrim — darkens the center where the UI sits, keeps the art visible at the edges */
 body::before{
@@ -43,7 +49,16 @@ h2{font-size:clamp(1.5rem,6.5vw,2.1rem); margin:2px 0; text-transform:uppercase;
 .error{color:#ff9d9d; margin:2px 0; font-weight:600}
 
 .headline{width:clamp(250px,80vw,360px); height:auto; filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)); margin-bottom:2px}
+.headline-won{width:clamp(230px,72vw,360px); height:auto; filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)); margin-bottom:2px}
+.headline-merci{width:clamp(210px,62vw,320px); height:auto; filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)); margin-bottom:2px}
 .brand-logo{width:clamp(110px,38vw,170px); aspect-ratio:1; filter:drop-shadow(0 8px 22px rgba(0,0,0,.55))}
+
+/* Language switch */
+.lang-switch{position:fixed; top:calc(env(safe-area-inset-top) + 10px); right:12px; z-index:40;
+  display:flex; gap:3px; background:rgba(10,8,6,.5); border:1px solid var(--line); border-radius:999px; padding:3px; backdrop-filter:blur(4px)}
+.lang-switch button{border:0; background:none; color:var(--muted); font-family:"Poppins",sans-serif; font-weight:700; font-size:.8rem; padding:5px 11px; border-radius:999px; cursor:pointer}
+.lang-switch button.active{background:var(--cta); color:#2a1200}
+body.kiosk .lang-switch button{font-size:1rem; padding:8px 16px}
 
 input,textarea{
   width:100%; padding:15px 16px; border-radius:14px; border:2px solid var(--line);

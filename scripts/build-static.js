@@ -7,7 +7,7 @@ const root = path.join(__dirname, '..');
 const pub = path.join(root, 'public');
 const docs = path.join(root, 'docs');
 
-const SHARED = ['index.html', 'styles.css', 'wheel.js', 'player.js', 'confetti.js', 'sound.js'];
+const SHARED = ['index.html', 'styles.css', 'wheel.js', 'player.js', 'confetti.js', 'sound.js', 'i18n.js'];
 
 fs.mkdirSync(docs, { recursive: true });
 fs.mkdirSync(path.join(docs, 'assets'), { recursive: true });

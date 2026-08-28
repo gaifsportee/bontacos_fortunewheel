@@ -1,106 +1,79 @@
 (function () {
-  const qs = (id) => document.getElementById(id);
-  const screens = ['welcome','unlock','wheel','prize','review','feedback','lead','done'];
+  var qs = function (id) { return document.getElementById(id); };
+  var screens = ['welcome','unlock','wheel','prize','review','feedback','lead','done'];
+  // Baked segment-center angles (clockwise from the top pointer) for each prize index.
+  // MUST match the prize order in the config / server seed.
+  var THETA = [270, 30, 150, 210, 90, 330];
+
   function show(name) {
-    screens.forEach((s) => qs('screen-' + s).classList.toggle('active', s === name));
-    if (name === 'wheel') sizeWheel();
+    screens.forEach(function (s) { qs('screen-' + s).classList.toggle('active', s === name); });
+    if (name === 'wheel' && window.Wheel) Wheel.reset(qs('wheel-disc'));
   }
 
-  // Stable per-device id (best-effort anti-replay; the daily code is the real gate).
   function deviceId() {
-    let id = localStorage.getItem('bt_device');
+    var id = localStorage.getItem('bt_device');
     if (!id) { id = 'dev-' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('bt_device', id); }
     return id;
   }
 
-  const params = new URLSearchParams(location.search);
-  const KIOSK = params.get('mode') === 'kiosk';
+  var params = new URLSearchParams(location.search);
+  var KIOSK = params.get('mode') === 'kiosk';
   if (KIOSK) document.body.classList.add('kiosk');
 
-  const state = { config: null, pendingPlay: null, rotation: 0, spinning: false };
-
-  function sizeWheel() {
-    if (!state.config) return;
-    const wrap = document.querySelector('.wheel-wrap');
-    const px = wrap.clientWidth || 320;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const canvas = qs('wheel');
-    canvas.width = Math.round(px * dpr);
-    canvas.height = Math.round(px * dpr);
-    Wheel.drawWheel(canvas, state.config.slices, state.rotation);
-  }
-  window.addEventListener('resize', () => {
-    if (qs('screen-wheel').classList.contains('active') && !state.spinning) sizeWheel();
-  });
+  var state = { config: null, pendingPlay: null, spinning: false };
 
   async function loadConfig() {
     state.config = await BTApi.getConfig();
     document.title = (state.config.name || 'BON TACOS') + ' — Spin to Win';
-    // Demo mode (static build): prefill the day's code so the client can just tap Unlock.
     if (state.config.demo && state.config.demo.code) {
       qs('code-input').value = state.config.demo.code;
-      const hint = qs('demo-hint');
+      var hint = qs('demo-hint');
       if (hint) { hint.textContent = 'Demo mode — code pre-filled, just tap Unlock.'; hint.hidden = false; }
     }
   }
 
   async function doPlay(code) {
-    const { status, body } = await BTApi.play(code, deviceId());
-    if (status === 403) { qs('code-error').hidden = false; return null; }
-    if (status !== 200 || !body) { alert('Something went wrong. Please try again.'); return null; }
-    return body;
-  }
-
-  function pulseWinner(canvas, slices, rotation, index) {
-    return new Promise((resolve) => {
-      const start = performance.now();
-      const dur = 950;
-      function frame(now) {
-        const t = Math.min(1, (now - start) / dur);
-        // two bright pulses that fade out
-        const glow = Math.abs(Math.sin(t * Math.PI * 2)) * (1 - t);
-        Wheel.drawWheel(canvas, slices, rotation, { highlight: index, glow });
-        if (t < 1) requestAnimationFrame(frame);
-        else { Wheel.drawWheel(canvas, slices, rotation); resolve(); }
-      }
-      requestAnimationFrame(frame);
-    });
+    var res = await BTApi.play(code, deviceId());
+    if (res.status === 403) { qs('code-error').hidden = false; return null; }
+    if (res.status !== 200 || !res.body) { alert('Something went wrong. Please try again.'); return null; }
+    return res.body;
   }
 
   async function runSpin(play) {
     if (state.spinning) return;
     state.spinning = true;
-    const btn = qs('btn-spin');
-    btn.disabled = true;
-    btn.textContent = 'SPINNING…';
+    var btn = qs('btn-spin');
+    btn.disabled = true; btn.textContent = 'SPINNING…';
     if (window.Sound) Sound.enable();
-    const canvas = qs('wheel');
-    state.rotation = await Wheel.spinTo(canvas, state.config.slices, play.winningIndex, {
-      fromRotation: state.rotation,
-      onTick: () => { if (window.Sound) Sound.tick(); },
+    var theta = THETA[play.winningIndex];
+    if (theta == null) theta = play.winningIndex * 60; // graceful fallback
+    await Wheel.spin(qs('wheel-disc'), theta, {
+      onTick: function () { if (window.Sound) Sound.tick(); },
     });
     if (window.Sound) Sound.win();
-    await pulseWinner(canvas, state.config.slices, state.rotation, play.winningIndex);
+    var wrap = document.querySelector('.wheel-wrap');
+    wrap.classList.add('win');
+    await new Promise(function (r) { setTimeout(r, 900); });
+    wrap.classList.remove('win');
     state.spinning = false;
-    btn.disabled = false;
-    btn.textContent = 'SPIN';
+    btn.disabled = false; btn.textContent = 'SPIN';
     showPrize(play);
   }
 
-  let countdownTimer = null;
+  var countdownTimer = null;
   function showPrize(play) {
-    qs('prize-label').textContent = `${play.prize.emoji || ''} ${play.prize.label}`.trim();
+    qs('prize-label').textContent = ((play.prize.emoji || '') + ' ' + play.prize.label).trim();
     qs('win-code').textContent = play.winCode;
     show('prize');
     if (window.Confetti) Confetti.burst();
     clearInterval(countdownTimer);
-    const end = new Date(play.expiresAt).getTime();
-    const el = qs('countdown');
-    const tick = () => {
-      const left = Math.max(0, Math.floor((end - Date.now()) / 1000));
-      const m = String(Math.floor(left / 60)).padStart(2, '0');
-      const s = String(left % 60).padStart(2, '0');
-      if (left > 0) { el.textContent = `Expires in ${m}:${s}`; el.classList.remove('expired'); }
+    var end = new Date(play.expiresAt).getTime();
+    var el = qs('countdown');
+    var tick = function () {
+      var left = Math.max(0, Math.floor((end - Date.now()) / 1000));
+      var m = String(Math.floor(left / 60)).padStart(2, '0');
+      var s = String(left % 60).padStart(2, '0');
+      if (left > 0) { el.textContent = 'Expires in ' + m + ':' + s; el.classList.remove('expired'); }
       else { el.textContent = 'Expired — ask your server'; el.classList.add('expired'); clearInterval(countdownTimer); }
     };
     tick();
@@ -108,55 +81,52 @@
   }
 
   // --- wiring ---
-  qs('btn-start').addEventListener('click', () => show(KIOSK ? 'wheel' : 'unlock'));
+  qs('btn-start').addEventListener('click', function () { show(KIOSK ? 'wheel' : 'unlock'); });
 
-  qs('btn-unlock').addEventListener('click', async () => {
+  qs('btn-unlock').addEventListener('click', async function () {
     qs('code-error').hidden = true;
-    const play = await doPlay(qs('code-input').value);
+    var play = await doPlay(qs('code-input').value);
     if (!play) return;
-    // Always show the wheel and let the customer tap SPIN — even a returning player
-    // (already played today) gets the animation; it just lands on their existing prize.
     state.pendingPlay = play;
     show('wheel');
   });
 
-  qs('code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') qs('btn-unlock').click(); });
+  qs('code-input').addEventListener('keydown', function (e) { if (e.key === 'Enter') qs('btn-unlock').click(); });
 
-  qs('btn-spin').addEventListener('click', async () => {
+  qs('btn-spin').addEventListener('click', async function () {
     if (state.spinning) return;
-    let play = state.pendingPlay;
+    var play = state.pendingPlay;
     if (!play && KIOSK) {
       play = await doPlay(window.__KIOSK_CODE__ || '');
       if (!play) return;
-      if (play.alreadyPlayed) { showPrize(play); return; }
     }
     if (!play) return;
     state.pendingPlay = null;
     await runSpin(play);
   });
 
-  qs('btn-to-review').addEventListener('click', () => show('review'));
+  qs('btn-to-review').addEventListener('click', function () { show('review'); });
 
-  qs('btn-up').addEventListener('click', async () => {
+  qs('btn-up').addEventListener('click', async function () {
     await BTApi.feedback('up');
     if (state.config.googleReviewUrl) window.location.href = state.config.googleReviewUrl;
     else show('lead');
   });
 
-  qs('btn-down').addEventListener('click', () => show('feedback'));
-  qs('btn-skip-review').addEventListener('click', () => show('lead'));
+  qs('btn-down').addEventListener('click', function () { show('feedback'); });
+  qs('btn-skip-review').addEventListener('click', function () { show('lead'); });
 
-  qs('btn-send-feedback').addEventListener('click', async () => {
+  qs('btn-send-feedback').addEventListener('click', async function () {
     await BTApi.feedback('down', qs('feedback-text').value);
     show('lead');
   });
 
-  qs('btn-save-lead').addEventListener('click', async () => {
-    const email = qs('lead-email').value.trim();
+  qs('btn-save-lead').addEventListener('click', async function () {
+    var email = qs('lead-email').value.trim();
     if (email) await BTApi.lead(email);
     show('done');
   });
-  qs('btn-skip-lead').addEventListener('click', () => show('done'));
+  qs('btn-skip-lead').addEventListener('click', function () { show('done'); });
 
   loadConfig();
   show('welcome');

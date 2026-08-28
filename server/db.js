@@ -45,13 +45,14 @@ CREATE TABLE IF NOT EXISTS feedback (
 );
 `;
 
+// Order MUST match the wheel segment angles in public/player.js (THETA).
 const STARTER_PRIZES = [
-  { label: '10% off',        emoji: '💸', color: '#ed1c24', weight: 40, daily_cap: null },
-  { label: 'Free drink',     emoji: '🥤', color: '#f9be1e', weight: 25, daily_cap: null },
-  { label: 'Free churros',   emoji: '🍩', color: '#2f2620', weight: 15, daily_cap: 20 },
-  { label: 'Free nachos',    emoji: '🧀', color: '#f47a20', weight: 10, daily_cap: 10 },
-  { label: 'Free meal',      emoji: '🌮', color: '#c1121a', weight: 2,  daily_cap: 2 },
-  { label: 'Try again free', emoji: '🎁', color: '#f9be1e', weight: 8,  daily_cap: null },
+  { label: '10% off',      emoji: '🎟️', color: '#f9be1e', weight: 35, daily_cap: null }, // ticket
+  { label: 'Free drink',   emoji: '🥤', color: '#ed1c24', weight: 22, daily_cap: null }, // cup
+  { label: 'Free fries',   emoji: '🍟', color: '#f47a20', weight: 15, daily_cap: 25 },   // fries
+  { label: 'Free nachos',  emoji: '🧀', color: '#2f2620', weight: 15, daily_cap: 25 },   // nachos
+  { label: 'Mystery gift', emoji: '🎁', color: '#ed1c24', weight: 8,  daily_cap: 12 },   // gift
+  { label: 'Free meal',    emoji: '🌮', color: '#f9be1e', weight: 5,  daily_cap: 3 },    // coins
 ];
 
 function initSchema(db) {

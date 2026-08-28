@@ -5,13 +5,14 @@
   const CONFIG = {
     name: 'BON TACOS',
     googleReviewUrl: '', // leave empty for the demo so 👍 stays in the app; set the real URL in production
+    // Order MUST match the wheel segment angles in player.js (THETA).
     slices: [
-      { id: 1, label: '10% off',        emoji: '💸', color: '#ed1c24', weight: 40 },
-      { id: 2, label: 'Free drink',     emoji: '🥤', color: '#f9be1e', weight: 25 },
-      { id: 3, label: 'Free churros',   emoji: '🍩', color: '#2f2620', weight: 15 },
-      { id: 4, label: 'Free nachos',    emoji: '🧀', color: '#f47a20', weight: 10 },
-      { id: 5, label: 'Free meal',      emoji: '🌮', color: '#c1121a', weight: 2 },
-      { id: 6, label: 'Try again free', emoji: '🎁', color: '#f9be1e', weight: 8 },
+      { id: 1, label: '10% off',      emoji: '🎟️', color: '#f9be1e', weight: 35 }, // ticket
+      { id: 2, label: 'Free drink',   emoji: '🥤', color: '#ed1c24', weight: 22 }, // cup
+      { id: 3, label: 'Free fries',   emoji: '🍟', color: '#f47a20', weight: 15 }, // fries
+      { id: 4, label: 'Free nachos',  emoji: '🧀', color: '#2f2620', weight: 15 }, // nachos
+      { id: 5, label: 'Mystery gift', emoji: '🎁', color: '#ed1c24', weight: 8 },  // gift
+      { id: 6, label: 'Free meal',    emoji: '🌮', color: '#f9be1e', weight: 5 },  // coins
     ],
   };
 

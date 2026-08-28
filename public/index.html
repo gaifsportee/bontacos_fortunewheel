@@ -13,15 +13,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Arima:wght@500;600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="assets/logo.png" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <canvas id="confetti"></canvas>
   <main id="app">
     <!-- Welcome -->
     <section id="screen-welcome" class="screen active">
-      <img class="brand-logo" src="assets/logo.png" alt="BON TACOS" />
-      <h1>Spin to win!</h1>
+      <img class="headline" src="assets/headline-spin.png" alt="Spin to win!" />
       <p class="tagline">Le Tacos á la Française</p>
       <p class="sub">Play the wheel — everyone wins a treat.</p>
       <button id="btn-start" class="primary">Start</button>
@@ -40,11 +39,12 @@
 
     <!-- Wheel -->
     <section id="screen-wheel" class="screen">
-      <h2>Tap to spin!</h2>
+      <h2 class="wheel-heading">Tap to spin!</h2>
       <div class="wheel-wrap">
-        <div class="wheel-pointer"></div>
-        <canvas id="wheel" width="440" height="440"></canvas>
-        <img class="wheel-hub" src="assets/logo.png" alt="BON TACOS" />
+        <img class="wheel-frame" src="assets/wheel-frame.png" alt="" aria-hidden="true" />
+        <img class="wheel-disc" id="wheel-disc" src="assets/wheel-disc.png" alt="Prize wheel" />
+        <img class="wheel-hub" src="assets/wheel-hub.png" alt="" aria-hidden="true" />
+        <img class="wheel-logo" src="assets/logo.png" alt="BON TACOS" />
       </div>
       <button id="btn-spin" class="primary">SPIN</button>
     </section>
@@ -94,10 +94,10 @@
       <p class="sub">See you again at BON TACOS.</p>
     </section>
   </main>
-  <script src="wheel.js?v=3"></script>
-  <script src="confetti.js?v=3"></script>
-  <script src="sound.js?v=3"></script>
-  <script src="api.js?v=3"></script>
-  <script src="player.js?v=3"></script>
+  <script src="wheel.js?v=4"></script>
+  <script src="confetti.js?v=4"></script>
+  <script src="sound.js?v=4"></script>
+  <script src="api.js?v=4"></script>
+  <script src="player.js?v=4"></script>
 </body>
 </html>

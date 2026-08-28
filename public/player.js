@@ -1,13 +1,10 @@
 (function () {
   var qs = function (id) { return document.getElementById(id); };
   var screens = ['welcome','unlock','wheel','prize','review','feedback','lead','done'];
-  // Baked segment-center angles (clockwise from the top pointer) for each prize index.
-  // MUST match the prize order in the config / server seed.
-  var THETA = [270, 30, 150, 210, 90, 330];
 
   function show(name) {
     screens.forEach(function (s) { qs('screen-' + s).classList.toggle('active', s === name); });
-    if (name === 'wheel' && window.Wheel) Wheel.reset(qs('wheel-disc'));
+    if (name === 'wheel') sizeWheel();
   }
 
   function deviceId() {
@@ -20,7 +17,32 @@
   var KIOSK = params.get('mode') === 'kiosk';
   if (KIOSK) document.body.classList.add('kiosk');
 
-  var state = { config: null, pendingPlay: null, spinning: false };
+  var state = { config: null, pendingPlay: null, spinning: false, disc: null, discSize: 0, rotation: 0, fontsReady: false };
+
+  function sizeWheel() {
+    if (!state.config || !window.Wheel) return;
+    var wrap = document.querySelector('.wheel-wrap');
+    var px = wrap.clientWidth || 320;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var size = Math.round(px * dpr);
+    var canvas = qs('wheel');
+    canvas.width = size; canvas.height = size;
+    if (!state.disc || state.discSize !== size || state._rebuild) {
+      state.disc = Wheel.build(state.config.slices, size);
+      state.discSize = size; state._rebuild = false;
+    }
+    Wheel.render(canvas.getContext('2d'), state.disc, state.rotation, size);
+  }
+
+  window.addEventListener('resize', function () {
+    if (qs('screen-wheel').classList.contains('active') && !state.spinning) sizeWheel();
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      state.fontsReady = true; state._rebuild = true;
+      if (qs('screen-wheel').classList.contains('active')) sizeWheel();
+    });
+  }
 
   async function loadConfig() {
     state.config = await BTApi.getConfig();
@@ -45,9 +67,7 @@
     var btn = qs('btn-spin');
     btn.disabled = true; btn.textContent = 'SPINNING…';
     if (window.Sound) Sound.enable();
-    var theta = THETA[play.winningIndex];
-    if (theta == null) theta = play.winningIndex * 60; // graceful fallback
-    await Wheel.spin(qs('wheel-disc'), theta, {
+    state.rotation = await Wheel.spinTo(qs('wheel'), state.disc, play.winningIndex, state.config.slices.length, {
       onTick: function () { if (window.Sound) Sound.tick(); },
     });
     if (window.Sound) Sound.win();
@@ -81,13 +101,14 @@
   }
 
   // --- wiring ---
-  qs('btn-start').addEventListener('click', function () { show(KIOSK ? 'wheel' : 'unlock'); });
+  qs('btn-start').addEventListener('click', function () { state.rotation = 0; show(KIOSK ? 'wheel' : 'unlock'); });
 
   qs('btn-unlock').addEventListener('click', async function () {
     qs('code-error').hidden = true;
     var play = await doPlay(qs('code-input').value);
     if (!play) return;
     state.pendingPlay = play;
+    state.rotation = 0;
     show('wheel');
   });
 
@@ -96,10 +117,7 @@
   qs('btn-spin').addEventListener('click', async function () {
     if (state.spinning) return;
     var play = state.pendingPlay;
-    if (!play && KIOSK) {
-      play = await doPlay(window.__KIOSK_CODE__ || '');
-      if (!play) return;
-    }
+    if (!play && KIOSK) { play = await doPlay(window.__KIOSK_CODE__ || ''); if (!play) return; }
     if (!play) return;
     state.pendingPlay = null;
     await runSpin(play);

@@ -11,8 +11,8 @@
       { id: 2, label: 'Free drink',   emoji: '🥤', color: '#ed1c24', weight: 22 }, // cup
       { id: 3, label: 'Free fries',   emoji: '🍟', color: '#f47a20', weight: 15 }, // fries
       { id: 4, label: 'Free nachos',  emoji: '🧀', color: '#2f2620', weight: 15 }, // nachos
-      { id: 5, label: 'Mystery gift', emoji: '🎁', color: '#ed1c24', weight: 8 },  // gift
-      { id: 6, label: 'Free meal',    emoji: '🌮', color: '#f9be1e', weight: 5 },  // coins
+      { id: 5, label: 'Mystery gift', emoji: '🎁', color: '#c1121a', weight: 8 },  // gift
+      { id: 6, label: 'Free meal',    emoji: '🌮', color: '#2f2620', weight: 5 },  // coins
     ],
   };
 

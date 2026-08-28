@@ -51,8 +51,8 @@ const STARTER_PRIZES = [
   { label: 'Free drink',   emoji: '🥤', color: '#ed1c24', weight: 22, daily_cap: null }, // cup
   { label: 'Free fries',   emoji: '🍟', color: '#f47a20', weight: 15, daily_cap: 25 },   // fries
   { label: 'Free nachos',  emoji: '🧀', color: '#2f2620', weight: 15, daily_cap: 25 },   // nachos
-  { label: 'Mystery gift', emoji: '🎁', color: '#ed1c24', weight: 8,  daily_cap: 12 },   // gift
-  { label: 'Free meal',    emoji: '🌮', color: '#f9be1e', weight: 5,  daily_cap: 3 },    // coins
+  { label: 'Mystery gift', emoji: '🎁', color: '#c1121a', weight: 8,  daily_cap: 12 },   // gift
+  { label: 'Free meal',    emoji: '🌮', color: '#2f2620', weight: 5,  daily_cap: 3 },    // coins
 ];
 
 function initSchema(db) {

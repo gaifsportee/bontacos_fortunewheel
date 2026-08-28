@@ -98,11 +98,13 @@ button.link{background:none; border:0; color:var(--muted); margin-top:2px; curso
 .countdown{font-size:clamp(1rem,4.4vw,1.2rem); color:var(--gold); font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,.8)}
 .countdown.expired{color:#ff9d9d}
 
-.thumbs{display:flex; gap:18px; justify-content:center; margin:10px 0}
-.thumb{font-size:clamp(2.4rem,12vw,3.4rem); background:rgba(36,29,24,.75); border:2px solid var(--line); border-radius:20px; padding:14px 26px; cursor:pointer; transition:transform .08s, border-color .2s}
-.thumb:active{transform:scale(.94)}
-#btn-up:hover{border-color:var(--gold)}
-#btn-down:hover{border-color:var(--red)}
+.thumbs{display:flex; gap:16px; justify-content:center; margin:10px 0}
+.thumb{background:rgba(36,29,24,.5); border:2px solid var(--line); border-radius:22px; padding:12px 16px; cursor:pointer; transition:transform .08s, border-color .2s, background .2s}
+.thumb img{width:clamp(74px,22vw,108px); height:auto; display:block; filter:drop-shadow(0 6px 12px rgba(0,0,0,.5))}
+.thumb:active{transform:scale(.93)}
+#btn-up:hover{border-color:var(--gold); background:rgba(249,190,30,.12)}
+#btn-down:hover{border-color:var(--red); background:rgba(237,28,36,.12)}
+body.kiosk .thumb img{width:min(18vh,150px)}
 
 #confetti{position:fixed; inset:0; pointer-events:none; z-index:50; display:none}
 

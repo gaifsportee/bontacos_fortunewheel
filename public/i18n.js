@@ -36,7 +36,7 @@
       code_err: 'Ten kod jest błędny — zapytaj obsługę.',
       demo_hint: 'Tryb demo — kod wpisany, kliknij Odblokuj.',
       unlock: 'Odblokuj',
-      tap_spin: 'Kliknij, aby zakręcić!',
+      tap_spin: 'Dotknij, aby zakręcić!',
       spin: 'ZAKRĘĆ',
       spinning: 'KRĘCI SIĘ…',
       show_server: 'Pokaż obsłudze zanim wygaśnie:',
